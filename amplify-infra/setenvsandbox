@@ -1,0 +1,4 @@
+export AWS_PROFILE=sandbox-root
+export AWS_DEFAULT_REGION=eu-west-2
+export AWS_SDK_LOAD_CONFIG=1
+echo "Using profile $AWS_PROFILE"
