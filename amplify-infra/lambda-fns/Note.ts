@@ -1,7 +1,15 @@
 type Note = {
   id: string;
-  name: string;
-  completed: boolean;
+  description: string;
+  createdAt: string;
+};
+
+type NoteInput = {
+  description: string;
+};
+
+type UpdateNoteInput = {
+  description: string;
 };
 
 export default Note;

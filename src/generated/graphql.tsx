@@ -12,6 +12,9 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  AWSDateTime: any;
+  AWSJSON: any;
+  AWSPhone: any;
 };
 
 export type Mutation = {
@@ -38,15 +41,13 @@ export type MutationUpdateNoteArgs = {
 
 export type Note = {
   __typename?: 'Note';
-  completed: Scalars['Boolean'];
+  createdAt: Scalars['AWSDateTime'];
+  description: Scalars['String'];
   id: Scalars['ID'];
-  name: Scalars['String'];
 };
 
 export type NoteInput = {
-  completed: Scalars['Boolean'];
-  id: Scalars['ID'];
-  name: Scalars['String'];
+  description: Scalars['String'];
 };
 
 export type Query = {
@@ -61,9 +62,7 @@ export type QueryGetNoteByIdArgs = {
 };
 
 export type UpdateNoteInput = {
-  completed?: Maybe<Scalars['Boolean']>;
-  id: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
+  description: Scalars['String'];
 };
 
 export type CreateNoteMutationVariables = Exact<{
@@ -71,20 +70,18 @@ export type CreateNoteMutationVariables = Exact<{
 }>;
 
 
-export type CreateNoteMutation = { __typename?: 'Mutation', createNote?: Maybe<{ __typename?: 'Note', id: string, name: string, completed: boolean }> };
+export type CreateNoteMutation = { __typename?: 'Mutation', createNote?: Maybe<{ __typename?: 'Note', description: string }> };
 
 export type ListNotesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ListNotesQuery = { __typename?: 'Query', listNotes?: Maybe<Array<Maybe<{ __typename?: 'Note', id: string, name: string, completed: boolean }>>> };
+export type ListNotesQuery = { __typename?: 'Query', listNotes?: Maybe<Array<Maybe<{ __typename?: 'Note', id: string, description: string, createdAt: any }>>> };
 
 
 export const CreateNoteDocument = gql`
     mutation createNote($note: NoteInput!) {
   createNote(note: $note) {
-    id
-    name
-    completed
+    description
   }
 }
     `;
@@ -118,8 +115,8 @@ export const ListNotesDocument = gql`
     query listNotes {
   listNotes {
     id
-    name
-    completed
+    description
+    createdAt
   }
 }
     `;

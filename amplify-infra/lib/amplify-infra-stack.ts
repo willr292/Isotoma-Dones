@@ -3,6 +3,8 @@ import * as appsync from "@aws-cdk/aws-appsync";
 import * as ddb from "@aws-cdk/aws-dynamodb";
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as cognito from "@aws-cdk/aws-cognito";
+import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
+import * as path from "path";
 
 export class AmplifyInfraStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -63,10 +65,11 @@ export class AmplifyInfraStack extends cdk.Stack {
       value: this.region,
     });
 
-    const notesLambda = new lambda.Function(this, "AppSyncNotesHandler", {
+    const notesLambda = new NodejsFunction(this, "AppSyncNotesHandler", {
       runtime: lambda.Runtime.NODEJS_12_X,
-      handler: "main.handler",
-      code: lambda.Code.fromAsset("lambda-fns"),
+      handler: "handler",
+      //code: lambda.Code.fromAsset("lambda-fns"),
+      entry: path.join(__dirname, `/../lambda-fns/main.js`),
       memorySize: 1024,
     });
 
@@ -98,7 +101,7 @@ export class AmplifyInfraStack extends cdk.Stack {
       fieldName: "updateNote",
     });
 
-    const notesTable = new ddb.Table(this, "CDKNotesTable", {
+    const notesTable = new ddb.Table(this, "CDKNotesTable2", {
       billingMode: ddb.BillingMode.PAY_PER_REQUEST,
       partitionKey: {
         name: "id",

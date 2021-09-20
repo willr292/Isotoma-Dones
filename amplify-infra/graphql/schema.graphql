@@ -1,19 +1,15 @@
 type Note {
   id: ID!
-  name: String!
-  completed: Boolean!
+  description: String!
+  createdAt: String!
 }
 
 input NoteInput {
-  id: ID!
-  name: String!
-  completed: Boolean!
+  description: String!
 }
 
 input UpdateNoteInput {
-  id: ID!
-  name: String
-  completed: Boolean
+  description: String!
 }
 
 type Query {

@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Formik, Form, Field } from "formik";
 import { useCreateNoteMutation } from "../generated/graphql";
-import { v4 as uuidv4 } from "uuid";
 
 interface FormValues {
   description: string;
@@ -17,27 +16,37 @@ const AddNoteForm: React.FC<{}> = () => {
       <Formik
         initialValues={initialValues}
         onSubmit={async (values, actions) => {
+          actions.setSubmitting(true);
           await createNoteMutation({
             variables: {
               note: {
-                name: values.description,
-                completed: false,
-                id: uuidv4(),
+                description: values.description,
               },
             },
             update: (cache) => {
               cache.evict({ id: "ROOT_QUERY", fieldName: "listNotes" });
             },
           });
-
+          actions.resetForm({});
           actions.setSubmitting(false);
         }}
       >
-        <Form>
-          <label htmlFor="description">Description</label>
-          <Field id="description" name="description" placeholder="Done" />
-          <button type="submit">Submit</button>
-        </Form>
+        {({ isSubmitting }) => {
+          return (
+            <Form>
+              <label htmlFor="description">Description</label>
+              <Field
+                disabled={isSubmitting}
+                id="description"
+                name="description"
+                placeholder="Done"
+              />
+              <button disabled={isSubmitting} type="submit">
+                Submit
+              </button>
+            </Form>
+          );
+        }}
       </Formik>
     </div>
   );

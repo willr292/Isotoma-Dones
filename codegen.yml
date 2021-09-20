@@ -1,5 +1,5 @@
 overwrite: true
-schema: "amplify-infra/graphql/schema.graphql"
+schema: "amplify-infra/graphql/*.graphql"
 documents: "src/**/*.graphql"
 generates:
   src/generated/graphql.tsx:

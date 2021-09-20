@@ -19,7 +19,9 @@ function Home() {
           <AddNoteForm />
           <div>
             {data!.listNotes?.map((x) => (
-              <p>{x?.name}</p>
+              <p key={x?.id}>
+                {x?.description} - {x?.createdAt}
+              </p>
             ))}
           </div>
         </>
