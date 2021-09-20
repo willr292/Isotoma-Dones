@@ -15,6 +15,7 @@ input UpdateNoteInput {
 type Query {
   getNoteById(noteId: String!): Note
   listNotes: [Note]
+  listNotesByDate(date: String!): [Note]
 }
 
 type Mutation {

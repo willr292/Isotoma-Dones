@@ -36,6 +36,7 @@ const AddNoteForm: React.FC<{}> = () => {
             <Form>
               <label htmlFor="description">Description</label>
               <Field
+                style={{ margin: "10px" }}
                 disabled={isSubmitting}
                 id="description"
                 name="description"

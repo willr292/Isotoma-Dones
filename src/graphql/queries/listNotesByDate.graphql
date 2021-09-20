@@ -1,0 +1,7 @@
+query listNotesByDate($date: String!) {
+  listNotesByDate(date: $date) {
+    id
+    description
+    createdAt
+  }
+}

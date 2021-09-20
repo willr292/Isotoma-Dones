@@ -87,6 +87,11 @@ export class AmplifyInfraStack extends cdk.Stack {
     });
 
     lambdaDs.createResolver({
+      typeName: "Query",
+      fieldName: "listNotesByDate",
+    });
+
+    lambdaDs.createResolver({
       typeName: "Mutation",
       fieldName: "createNote",
     });
