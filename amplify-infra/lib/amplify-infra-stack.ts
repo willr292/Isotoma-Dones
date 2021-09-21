@@ -1,9 +1,10 @@
-import * as cdk from "@aws-cdk/core";
 import * as appsync from "@aws-cdk/aws-appsync";
-import * as ddb from "@aws-cdk/aws-dynamodb";
-import * as lambda from "@aws-cdk/aws-lambda";
 import * as cognito from "@aws-cdk/aws-cognito";
+import * as ddb from "@aws-cdk/aws-dynamodb";
+import * as iam from "@aws-cdk/aws-iam";
+import * as lambda from "@aws-cdk/aws-lambda";
 import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
+import * as cdk from "@aws-cdk/core";
 import * as path from "path";
 
 export class AmplifyInfraStack extends cdk.Stack {
@@ -65,13 +66,56 @@ export class AmplifyInfraStack extends cdk.Stack {
       value: this.region,
     });
 
+    // const adminRole = new iam.Role(this, "adminRole", {
+    //   roleName: "adminRole",
+    //   assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
+    // });
+
+    // adminRole.addToPolicy(
+    //   new iam.PolicyStatement({
+    //     resources: ["*"],
+    //     actions: [
+    //       "cognito-idp:AdminCreateUser",
+    //       "cognito-idp:AdminAddUserToGroup",
+    //     ],
+    //   })
+    // );
+
     const notesLambda = new NodejsFunction(this, "AppSyncNotesHandler", {
       runtime: lambda.Runtime.NODEJS_12_X,
       handler: "handler",
+      //role: adminRole,
       //code: lambda.Code.fromAsset("lambda-fns"),
       entry: path.join(__dirname, `/../lambda-fns/main.js`),
       memorySize: 1024,
     });
+
+    // notesLambda.addToRolePolicy(
+    //   new iam.PolicyStatement({
+    //     effect: Effect.ALLOW,
+    //     resources: [
+    //       "arn:aws:cognito-idp:eu-west-2:723455457584:userpool/eu-west-2_1jdqlNjvz",
+    //     ],
+    //     actions: [
+    //       "cognito-idp:AdminCreateUser",
+    //       "cognito-idp:AdminAddUserToGroup",
+    //     ],
+    //   })
+    // );
+
+    notesLambda.role?.attachInlinePolicy(
+      new iam.Policy(this, "userpool-policy", {
+        statements: [
+          new iam.PolicyStatement({
+            actions: [
+              "cognito-idp:AdminCreateUser",
+              "cognito-idp:AdminAddUserToGroup",
+            ],
+            resources: [userPool.userPoolArn],
+          }),
+        ],
+      })
+    );
 
     // Set the new Lambda function as a data source for the AppSync API
     const lambdaDs = api.addLambdaDataSource("lambdaDatasource", notesLambda);
@@ -104,6 +148,11 @@ export class AmplifyInfraStack extends cdk.Stack {
     lambdaDs.createResolver({
       typeName: "Mutation",
       fieldName: "updateNote",
+    });
+
+    lambdaDs.createResolver({
+      typeName: "Mutation",
+      fieldName: "createUser",
     });
 
     const notesTable = new ddb.Table(this, "CDKNotesTable2", {

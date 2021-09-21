@@ -80,7 +80,6 @@ export type UserCreateInput = {
   admin: Scalars['Boolean'];
   email: Scalars['String'];
   password: Scalars['String'];
-  username: Scalars['String'];
 };
 
 export type CreateNoteMutationVariables = Exact<{

@@ -3,11 +3,10 @@ import * as AWS from "aws-sdk";
 async function createUser(user: UserCreateInput) {
   var params = {
     UserPoolId: "eu-west-2_1jdqlNjvz",
-    Username: user.username,
+    Username: user.email,
     ForceAliasCreation: false,
     TemporaryPassword: user.password,
     DesiredDeliveryMediums: ["EMAIL"],
-    MessageAction: "RESEND",
     UserAttributes: [
       {
         Name: "email",
@@ -31,7 +30,7 @@ async function createUser(user: UserCreateInput) {
       var adminParams = {
         GroupName: "admin",
         UserPoolId: "eu-west-2_1jdqlNjvz",
-        Username: user.username,
+        Username: user.email,
       };
       await cognitoidentityserviceprovider
         .adminAddUserToGroup(adminParams)

@@ -17,7 +17,6 @@ input UpdateNoteInput {
 input UserCreateInput {
   email: String!
   password: String!
-  username: String!
   admin: Boolean!
 }
 

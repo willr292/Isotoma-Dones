@@ -1,25 +1,32 @@
 import { Field, Form, Formik } from "formik";
 import * as React from "react";
+import { useHistory } from "react-router";
 import { useCreateUserMutation } from "../generated/graphql";
 
 interface user {
   email: string;
   password: string;
-  username: string;
   admin: boolean;
 }
 
 // TODO Add validation to form
 const Admin = () => {
+  let history = useHistory();
   const [createUser] = useCreateUserMutation();
   const initialValues: user = {
     email: "",
     password: "",
-    username: "",
     admin: false,
   };
   return (
     <div>
+      <button
+        onClick={() => {
+          history.push("/");
+        }}
+      >
+        Home
+      </button>
       <h1>Add a User</h1>
       <Formik
         initialValues={initialValues}
@@ -48,14 +55,6 @@ const Admin = () => {
                 name="email"
                 type="text"
                 placeholder="Enter an email"
-              />
-              <br />
-              <label htmlFor="username">Username</label>
-              <Field
-                id="username"
-                name="username"
-                type="text"
-                placeholder="Enter a username"
               />
               <br />
               <label htmlFor="password">Password</label>
