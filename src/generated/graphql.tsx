@@ -17,6 +17,7 @@ export type Scalars = {
 export type Mutation = {
   __typename?: 'Mutation';
   createNote?: Maybe<Note>;
+  createUser?: Maybe<Scalars['String']>;
   deleteNote?: Maybe<Scalars['String']>;
   updateNote?: Maybe<Note>;
 };
@@ -24,6 +25,11 @@ export type Mutation = {
 
 export type MutationCreateNoteArgs = {
   note: NoteInput;
+};
+
+
+export type MutationCreateUserArgs = {
+  user: UserCreateInput;
 };
 
 
@@ -39,11 +45,13 @@ export type MutationUpdateNoteArgs = {
 export type Note = {
   __typename?: 'Note';
   createdAt: Scalars['String'];
+  creator: Scalars['String'];
   description: Scalars['String'];
   id: Scalars['ID'];
 };
 
 export type NoteInput = {
+  creator: Scalars['String'];
   description: Scalars['String'];
 };
 
@@ -68,12 +76,26 @@ export type UpdateNoteInput = {
   description: Scalars['String'];
 };
 
+export type UserCreateInput = {
+  admin: Scalars['Boolean'];
+  email: Scalars['String'];
+  password: Scalars['String'];
+  username: Scalars['String'];
+};
+
 export type CreateNoteMutationVariables = Exact<{
   note: NoteInput;
 }>;
 
 
-export type CreateNoteMutation = { __typename?: 'Mutation', createNote?: Maybe<{ __typename?: 'Note', description: string }> };
+export type CreateNoteMutation = { __typename?: 'Mutation', createNote?: Maybe<{ __typename?: 'Note', description: string, creator: string }> };
+
+export type CreateUserMutationVariables = Exact<{
+  user: UserCreateInput;
+}>;
+
+
+export type CreateUserMutation = { __typename?: 'Mutation', createUser?: Maybe<string> };
 
 export type DeleteNoteMutationVariables = Exact<{
   noteId: Scalars['String'];
@@ -99,6 +121,7 @@ export const CreateNoteDocument = gql`
     mutation createNote($note: NoteInput!) {
   createNote(note: $note) {
     description
+    creator
   }
 }
     `;
@@ -128,6 +151,37 @@ export function useCreateNoteMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreateNoteMutationHookResult = ReturnType<typeof useCreateNoteMutation>;
 export type CreateNoteMutationResult = Apollo.MutationResult<CreateNoteMutation>;
 export type CreateNoteMutationOptions = Apollo.BaseMutationOptions<CreateNoteMutation, CreateNoteMutationVariables>;
+export const CreateUserDocument = gql`
+    mutation createUser($user: UserCreateInput!) {
+  createUser(user: $user)
+}
+    `;
+export type CreateUserMutationFn = Apollo.MutationFunction<CreateUserMutation, CreateUserMutationVariables>;
+
+/**
+ * __useCreateUserMutation__
+ *
+ * To run a mutation, you first call `useCreateUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createUserMutation, { data, loading, error }] = useCreateUserMutation({
+ *   variables: {
+ *      user: // value for 'user'
+ *   },
+ * });
+ */
+export function useCreateUserMutation(baseOptions?: Apollo.MutationHookOptions<CreateUserMutation, CreateUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateUserMutation, CreateUserMutationVariables>(CreateUserDocument, options);
+      }
+export type CreateUserMutationHookResult = ReturnType<typeof useCreateUserMutation>;
+export type CreateUserMutationResult = Apollo.MutationResult<CreateUserMutation>;
+export type CreateUserMutationOptions = Apollo.BaseMutationOptions<CreateUserMutation, CreateUserMutationVariables>;
 export const DeleteNoteDocument = gql`
     mutation deleteNote($noteId: String!) {
   deleteNote(noteId: $noteId)

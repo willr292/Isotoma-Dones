@@ -1,8 +1,7 @@
 const AWS = require("aws-sdk");
 const docClient = new AWS.DynamoDB.DocumentClient();
-import Note from "./Note";
-import NoteInput from "./Note";
 import { v4 as uuidv4 } from "uuid";
+import { default as Note, default as NoteInput } from "./Note";
 
 async function createNote(input: NoteInput) {
   const now = new Date();
@@ -10,6 +9,7 @@ async function createNote(input: NoteInput) {
     id: uuidv4(),
     description: input.description,
     createdAt: now.toISOString(),
+    creator: input.creator,
   };
 
   const params = {

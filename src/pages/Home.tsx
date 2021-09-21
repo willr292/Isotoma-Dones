@@ -1,11 +1,14 @@
+import Auth from "@aws-amplify/auth";
 import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { useHistory } from "react-router";
 import AddNoteForm from "../components/AddNoteForm";
 import { useDeleteNoteMutation, useListNotesQuery } from "../generated/graphql";
 import "./Home.css";
 
 function Home() {
+  let history = useHistory();
   const { data, loading, error } = useListNotesQuery();
   const [deleteNote] = useDeleteNoteMutation();
   const [dateFilter, setDateFilter] = useState(new Date().toISOString());
@@ -37,6 +40,21 @@ function Home() {
         <div>loading...</div>
       ) : (
         <>
+          <button
+            onClick={() => {
+              Auth.signOut();
+              history.push("/login");
+            }}
+          >
+            Log Out
+          </button>
+          <button
+            onClick={() => {
+              history.push("/admin");
+            }}
+          >
+            Admin Page
+          </button>
           <AddNoteForm />
           <DatePicker
             selected={new Date(dateFilter)}

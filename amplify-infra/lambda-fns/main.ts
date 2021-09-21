@@ -5,6 +5,7 @@ import listNotes from "./listNotes";
 import listNotesByDate from "./listNotesByDate";
 import Note from "./Note";
 import updateNote from "./updateNote";
+import createUser from "./createUser";
 
 type AppSyncEvent = {
   info: {
@@ -14,6 +15,7 @@ type AppSyncEvent = {
     noteId: string;
     note: Note;
     date: string;
+    user: UserCreateInput;
   };
 };
 
@@ -31,6 +33,8 @@ export const handler = async (event: AppSyncEvent) => {
       return await deleteNote(event.arguments.noteId);
     case "updateNote":
       return await updateNote(event.arguments.note);
+    case "createUser":
+      return await createUser(event.arguments.user);
     default:
       return null;
   }

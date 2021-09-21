@@ -1,7 +1,8 @@
-import Auth from "@aws-amplify/auth";
+import Auth, { CognitoUser } from "@aws-amplify/auth";
 import { Field, Form, Formik } from "formik";
 import { useHistory } from "react-router";
 
+// TODO Add validation to form
 export default function Login() {
   let history = useHistory();
   return (
@@ -9,7 +10,11 @@ export default function Login() {
       <Formik
         initialValues={{ email: "", password: "" }}
         onSubmit={async (values, { setSubmitting }) => {
-          await Auth.signIn(values.email, values.password);
+          const user: CognitoUser = await Auth.signIn(
+            values.email,
+            values.password
+          );
+          console.log(user);
           //await Auth.completeNewPassword(x, values.password);
           setSubmitting(false);
           history.push("/");

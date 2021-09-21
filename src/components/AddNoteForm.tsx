@@ -1,11 +1,13 @@
 import * as React from "react";
 import { Formik, Form, Field } from "formik";
 import { useCreateNoteMutation } from "../generated/graphql";
+import Auth, { CognitoUser } from "@aws-amplify/auth";
 
 interface FormValues {
   description: string;
 }
 
+// TODO Add validation to form
 const AddNoteForm: React.FC<{}> = () => {
   const initialValues: FormValues = { description: "" };
   const [createNoteMutation] = useCreateNoteMutation();
@@ -17,10 +19,12 @@ const AddNoteForm: React.FC<{}> = () => {
         initialValues={initialValues}
         onSubmit={async (values, actions) => {
           actions.setSubmitting(true);
+          const user: CognitoUser = await Auth.currentAuthenticatedUser();
           await createNoteMutation({
             variables: {
               note: {
                 description: values.description,
+                creator: user.getUsername(),
               },
             },
             update: (cache) => {

@@ -1,7 +1,9 @@
 import { Route, Switch } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import PrivateRoute from "./PrivateRoute";
+import PrivateRoute from "./components/PrivateRoute";
+import Admin from "./pages/Admin";
+import AdminRoute from "./components/AdminRoute";
 
 function App() {
   return (
@@ -9,6 +11,9 @@ function App() {
       <Route path="/login">
         <Login />
       </Route>
+      <AdminRoute path="/admin">
+        <Admin />
+      </AdminRoute>
       <PrivateRoute path="/">
         <Home />
       </PrivateRoute>

@@ -2,14 +2,23 @@ type Note {
   id: ID!
   description: String!
   createdAt: String!
+  creator: String!
 }
 
 input NoteInput {
   description: String!
+  creator: String!
 }
 
 input UpdateNoteInput {
   description: String!
+}
+
+input UserCreateInput {
+  email: String!
+  password: String!
+  username: String!
+  admin: Boolean!
 }
 
 type Query {
@@ -22,4 +31,5 @@ type Mutation {
   createNote(note: NoteInput!): Note
   updateNote(note: UpdateNoteInput!): Note
   deleteNote(noteId: String!): String
+  createUser(user: UserCreateInput!): String
 }

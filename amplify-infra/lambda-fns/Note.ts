@@ -2,10 +2,12 @@ type Note = {
   id: string;
   description: string;
   createdAt: string;
+  creator: string;
 };
 
 type NoteInput = {
   description: string;
+  creator: string;
 };
 
 type UpdateNoteInput = {
