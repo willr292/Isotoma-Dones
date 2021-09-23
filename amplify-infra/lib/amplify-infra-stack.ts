@@ -66,21 +66,6 @@ export class AmplifyInfraStack extends cdk.Stack {
       value: this.region,
     });
 
-    // const adminRole = new iam.Role(this, "adminRole", {
-    //   roleName: "adminRole",
-    //   assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
-    // });
-
-    // adminRole.addToPolicy(
-    //   new iam.PolicyStatement({
-    //     resources: ["*"],
-    //     actions: [
-    //       "cognito-idp:AdminCreateUser",
-    //       "cognito-idp:AdminAddUserToGroup",
-    //     ],
-    //   })
-    // );
-
     const notesLambda = new NodejsFunction(this, "AppSyncNotesHandler", {
       runtime: lambda.Runtime.NODEJS_12_X,
       handler: "handler",
@@ -89,19 +74,6 @@ export class AmplifyInfraStack extends cdk.Stack {
       entry: path.join(__dirname, `/../lambda-fns/main.js`),
       memorySize: 1024,
     });
-
-    // notesLambda.addToRolePolicy(
-    //   new iam.PolicyStatement({
-    //     effect: Effect.ALLOW,
-    //     resources: [
-    //       "arn:aws:cognito-idp:eu-west-2:723455457584:userpool/eu-west-2_1jdqlNjvz",
-    //     ],
-    //     actions: [
-    //       "cognito-idp:AdminCreateUser",
-    //       "cognito-idp:AdminAddUserToGroup",
-    //     ],
-    //   })
-    // );
 
     notesLambda.role?.attachInlinePolicy(
       new iam.Policy(this, "userpool-policy", {
@@ -155,12 +127,18 @@ export class AmplifyInfraStack extends cdk.Stack {
       fieldName: "createUser",
     });
 
-    const notesTable = new ddb.Table(this, "CDKNotesTable2", {
+    lambdaDs.createResolver({
+      typeName: "Mutation",
+      fieldName: "addLike",
+    });
+
+    const notesTable = new ddb.Table(this, "newCDKNotesTable", {
       billingMode: ddb.BillingMode.PAY_PER_REQUEST,
       partitionKey: {
-        name: "id",
+        name: "pk",
         type: ddb.AttributeType.STRING,
       },
+      sortKey: { name: "sk", type: ddb.AttributeType.STRING },
     });
     // enable the Lambda function to access the DynamoDB table (using IAM)
     notesTable.grantFullAccess(notesLambda);

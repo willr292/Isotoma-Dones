@@ -14,12 +14,33 @@ export type Scalars = {
   Float: number;
 };
 
+export type Comment = {
+  __typename?: 'Comment';
+  content: Scalars['String'];
+  creator: Scalars['String'];
+  id: Scalars['ID'];
+  noteId: Scalars['ID'];
+};
+
+export type Like = {
+  __typename?: 'Like';
+  creator: Scalars['String'];
+  id: Scalars['ID'];
+  noteId: Scalars['ID'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
+  addLike?: Maybe<Scalars['String']>;
   createNote?: Maybe<Note>;
   createUser?: Maybe<Scalars['String']>;
   deleteNote?: Maybe<Scalars['String']>;
   updateNote?: Maybe<Note>;
+};
+
+
+export type MutationAddLikeArgs = {
+  like: AddLikeInput;
 };
 
 
@@ -44,10 +65,12 @@ export type MutationUpdateNoteArgs = {
 
 export type Note = {
   __typename?: 'Note';
+  comments?: Maybe<Array<Maybe<Comment>>>;
   createdAt: Scalars['String'];
   creator: Scalars['String'];
   description: Scalars['String'];
   id: Scalars['ID'];
+  likes?: Maybe<Array<Maybe<Like>>>;
 };
 
 export type NoteInput = {
@@ -81,6 +104,18 @@ export type UserCreateInput = {
   email: Scalars['String'];
   password: Scalars['String'];
 };
+
+export type AddLikeInput = {
+  creator: Scalars['String'];
+  noteId: Scalars['String'];
+};
+
+export type AddLikeMutationVariables = Exact<{
+  like: AddLikeInput;
+}>;
+
+
+export type AddLikeMutation = { __typename?: 'Mutation', addLike?: Maybe<string> };
 
 export type CreateNoteMutationVariables = Exact<{
   note: NoteInput;
@@ -116,6 +151,37 @@ export type ListNotesByDateQueryVariables = Exact<{
 export type ListNotesByDateQuery = { __typename?: 'Query', listNotesByDate?: Maybe<Array<Maybe<{ __typename?: 'Note', id: string, description: string, createdAt: string }>>> };
 
 
+export const AddLikeDocument = gql`
+    mutation addLike($like: addLikeInput!) {
+  addLike(like: $like)
+}
+    `;
+export type AddLikeMutationFn = Apollo.MutationFunction<AddLikeMutation, AddLikeMutationVariables>;
+
+/**
+ * __useAddLikeMutation__
+ *
+ * To run a mutation, you first call `useAddLikeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddLikeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addLikeMutation, { data, loading, error }] = useAddLikeMutation({
+ *   variables: {
+ *      like: // value for 'like'
+ *   },
+ * });
+ */
+export function useAddLikeMutation(baseOptions?: Apollo.MutationHookOptions<AddLikeMutation, AddLikeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddLikeMutation, AddLikeMutationVariables>(AddLikeDocument, options);
+      }
+export type AddLikeMutationHookResult = ReturnType<typeof useAddLikeMutation>;
+export type AddLikeMutationResult = Apollo.MutationResult<AddLikeMutation>;
+export type AddLikeMutationOptions = Apollo.BaseMutationOptions<AddLikeMutation, AddLikeMutationVariables>;
 export const CreateNoteDocument = gql`
     mutation createNote($note: NoteInput!) {
   createNote(note: $note) {

@@ -1,3 +1,5 @@
+import { Like } from "./Like";
+
 type Note = {
   id: string;
   description: string;

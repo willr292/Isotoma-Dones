@@ -1,4 +1,4 @@
-const AWS = require("aws-sdk");
+import * as AWS from "aws-sdk";
 const docClient = new AWS.DynamoDB.DocumentClient();
 import { v4 as uuidv4 } from "uuid";
 import { default as Note, default as NoteInput } from "./Note";
@@ -13,8 +13,12 @@ async function createNote(input: NoteInput) {
   };
 
   const params = {
-    TableName: process.env.NOTES_TABLE,
-    Item: note,
+    TableName: process.env.NOTES_TABLE!,
+    Item: {
+      pk: "NOTE#" + note.id,
+      sk: "USER#" + input.creator,
+      val: note,
+    },
   };
 
   try {
@@ -22,7 +26,7 @@ async function createNote(input: NoteInput) {
     return note;
   } catch (err) {
     console.log("DynamoDB error: ", err);
-    return null;
+    throw new Error("Note not created");
   }
 }
 

@@ -3,7 +3,7 @@ import { Field, Form, Formik } from "formik";
 import { useState } from "react";
 import { useHistory } from "react-router";
 
-// CognitoUser is missing challengeName https://github.com/aws-amplify/amplify-js/issues/3733
+// CognitoUser is missing challengeName :( https://github.com/aws-amplify/amplify-js/issues/3733
 export type AuthChallengeName =
   | "NEW_PASSWORD_REQUIRED"
   | "SMS_MFA"
@@ -14,7 +14,7 @@ export type AuthUser = CognitoUser & {
   challengeName: AuthChallengeName;
 };
 
-// TODO Add validation to form
+// TODO Add validation to forms
 export default function Login() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [user, setUser] = useState<AuthUser>();

@@ -3,6 +3,21 @@ type Note {
   description: String!
   createdAt: String!
   creator: String!
+  likes: [Like]
+  comments: [Comment]
+}
+
+type Like {
+  id: ID!
+  noteId: ID!
+  creator: String!
+}
+
+type Comment {
+  id: ID!
+  noteId: ID!
+  creator: String!
+  content: String!
 }
 
 input NoteInput {
@@ -20,6 +35,11 @@ input UserCreateInput {
   admin: Boolean!
 }
 
+input addLikeInput {
+  noteId: String!
+  creator: String!
+}
+
 type Query {
   getNoteById(noteId: String!): Note
   listNotes: [Note]
@@ -31,4 +51,5 @@ type Mutation {
   updateNote(note: UpdateNoteInput!): Note
   deleteNote(noteId: String!): String
   createUser(user: UserCreateInput!): String
+  addLike(like: addLikeInput!): String
 }

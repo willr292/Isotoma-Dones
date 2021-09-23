@@ -6,6 +6,8 @@ import listNotesByDate from "./listNotesByDate";
 import Note from "./Note";
 import updateNote from "./updateNote";
 import createUser from "./createUser";
+import { addLikeInput } from "./Like";
+import addLike from "./addLike";
 
 type AppSyncEvent = {
   info: {
@@ -16,6 +18,7 @@ type AppSyncEvent = {
     note: Note;
     date: string;
     user: UserCreateInput;
+    like: addLikeInput;
   };
 };
 
@@ -35,6 +38,8 @@ export const handler = async (event: AppSyncEvent) => {
       return await updateNote(event.arguments.note);
     case "createUser":
       return await createUser(event.arguments.user);
+    case "addLike":
+      return await addLike(event.arguments.like);
     default:
       return null;
   }

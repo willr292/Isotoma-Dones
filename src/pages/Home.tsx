@@ -1,16 +1,21 @@
-import Auth from "@aws-amplify/auth";
+import Auth, { CognitoUser } from "@aws-amplify/auth";
 import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useHistory } from "react-router";
 import AddNoteForm from "../components/AddNoteForm";
-import { useDeleteNoteMutation, useListNotesQuery } from "../generated/graphql";
+import {
+  useAddLikeMutation,
+  useDeleteNoteMutation,
+  useListNotesQuery,
+} from "../generated/graphql";
 import "./Home.css";
 
 function Home() {
   let history = useHistory();
   const { data, loading, error } = useListNotesQuery();
   const [deleteNote] = useDeleteNoteMutation();
+  const [addLike] = useAddLikeMutation();
   const [dateFilter, setDateFilter] = useState(new Date().toISOString());
 
   async function handleDelete(id: string) {
@@ -41,8 +46,8 @@ function Home() {
       ) : (
         <>
           <button
-            onClick={() => {
-              Auth.signOut();
+            onClick={async () => {
+              await Auth.signOut();
               history.push("/login");
             }}
           >
@@ -75,6 +80,28 @@ function Home() {
                   <p key={x.id}>
                     {x.description} -{" "}
                     {new Date(x.createdAt).toLocaleDateString("en-GB")}
+                    <button
+                      onClick={async () => {
+                        const user: CognitoUser =
+                          await Auth.currentAuthenticatedUser();
+                        await addLike({
+                          variables: {
+                            like: {
+                              noteId: x.id,
+                              creator: user.getUsername(),
+                            },
+                          },
+                          update: (cache) => {
+                            cache.evict({
+                              id: "ROOT_QUERY",
+                              fieldName: "listNotes",
+                            });
+                          },
+                        });
+                      }}
+                    >
+                      👍
+                    </button>
                     <button onClick={() => handleDelete(x.id)}>X</button>
                   </p>
                 )
