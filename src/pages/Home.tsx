@@ -4,6 +4,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useHistory } from "react-router";
 import AddNoteForm from "../components/AddNoteForm";
+import CommentSection from "../components/CommentSection";
 import {
   useAddLikeMutation,
   useDeleteNoteMutation,
@@ -78,9 +79,10 @@ function Home() {
               .map((x) =>
                 !x ? null : (
                   <p key={x.id}>
-                    {x.description} -{" "}
+                    {x.description} -
                     {new Date(x.createdAt).toLocaleDateString("en-GB")}
                     <button
+                      //disabled={x.voteStatus}
                       onClick={async () => {
                         const user: CognitoUser =
                           await Auth.currentAuthenticatedUser();
@@ -100,9 +102,11 @@ function Home() {
                         });
                       }}
                     >
-                      👍
+                      👍 - {x.score}
                     </button>
-                    <button onClick={() => handleDelete(x.id)}>X</button>
+                    <button onClick={() => handleDelete(x.id)}>🗑️</button>
+                    <br />
+                    <CommentSection noteId={x.id} />
                   </p>
                 )
               )}

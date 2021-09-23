@@ -4,18 +4,16 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 async function deleteNote(noteId: string) {
   const params = {
     TableName: process.env.NOTES_TABLE,
-    KeyConditionExpression: "#pk = :keyval)",
-    ExpressionAttributeValues: {
-      ":keyval": "NOTE#" + noteId,
+    Key: {
+      pk: "NOTE#" + noteId,
     },
-    ExpressionAttributeNames: { "#pk": "pk" },
   };
   try {
     await docClient.delete(params).promise();
     return noteId;
   } catch (err) {
     console.log("DynamoDB error: ", err);
-    return null;
+    return "Delete failed";
   }
 }
 

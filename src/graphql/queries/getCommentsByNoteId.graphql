@@ -1,0 +1,7 @@
+query getCommentsByNoteId($noteId: String!) {
+  getCommentsByNoteId(noteId: $noteId) {
+    id
+    content
+    creator
+  }
+}

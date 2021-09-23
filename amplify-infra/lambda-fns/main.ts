@@ -8,6 +8,9 @@ import updateNote from "./updateNote";
 import createUser from "./createUser";
 import { addLikeInput } from "./Like";
 import addLike from "./addLike";
+import addComment from "./addComment";
+import addCommentInput from "./Comment";
+import getCommentsbyNoteId from "./getCommentsByNoteId";
 
 type AppSyncEvent = {
   info: {
@@ -19,6 +22,7 @@ type AppSyncEvent = {
     date: string;
     user: UserCreateInput;
     like: addLikeInput;
+    comment: addCommentInput;
   };
 };
 
@@ -40,6 +44,10 @@ export const handler = async (event: AppSyncEvent) => {
       return await createUser(event.arguments.user);
     case "addLike":
       return await addLike(event.arguments.like);
+    case "addComment":
+      return await addComment(event.arguments.comment);
+    case "getCommentsByNoteId":
+      return await getCommentsbyNoteId(event.arguments.noteId);
     default:
       return null;
   }

@@ -1,6 +1,3 @@
 mutation createNote($note: NoteInput!) {
-  createNote(note: $note) {
-    description
-    creator
-  }
+  createNote(note: $note)
 }

@@ -31,11 +31,16 @@ export type Like = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  addComment?: Maybe<Scalars['String']>;
   addLike?: Maybe<Scalars['String']>;
-  createNote?: Maybe<Note>;
+  createNote?: Maybe<Scalars['String']>;
   createUser?: Maybe<Scalars['String']>;
   deleteNote?: Maybe<Scalars['String']>;
-  updateNote?: Maybe<Note>;
+};
+
+
+export type MutationAddCommentArgs = {
+  comment: AddCommentInput;
 };
 
 
@@ -58,11 +63,6 @@ export type MutationDeleteNoteArgs = {
   noteId: Scalars['String'];
 };
 
-
-export type MutationUpdateNoteArgs = {
-  note: UpdateNoteInput;
-};
-
 export type Note = {
   __typename?: 'Note';
   comments?: Maybe<Array<Maybe<Comment>>>;
@@ -71,6 +71,8 @@ export type Note = {
   description: Scalars['String'];
   id: Scalars['ID'];
   likes?: Maybe<Array<Maybe<Like>>>;
+  score: Scalars['Int'];
+  voteStatus: Scalars['Boolean'];
 };
 
 export type NoteInput = {
@@ -80,9 +82,15 @@ export type NoteInput = {
 
 export type Query = {
   __typename?: 'Query';
+  getCommentsByNoteId?: Maybe<Array<Maybe<Comment>>>;
   getNoteById?: Maybe<Note>;
   listNotes?: Maybe<Array<Maybe<Note>>>;
   listNotesByDate?: Maybe<Array<Maybe<Note>>>;
+};
+
+
+export type QueryGetCommentsByNoteIdArgs = {
+  noteId: Scalars['String'];
 };
 
 
@@ -105,10 +113,23 @@ export type UserCreateInput = {
   password: Scalars['String'];
 };
 
+export type AddCommentInput = {
+  content: Scalars['String'];
+  creator: Scalars['String'];
+  noteId: Scalars['String'];
+};
+
 export type AddLikeInput = {
   creator: Scalars['String'];
   noteId: Scalars['String'];
 };
+
+export type AddCommentMutationVariables = Exact<{
+  comment: AddCommentInput;
+}>;
+
+
+export type AddCommentMutation = { __typename?: 'Mutation', addComment?: Maybe<string> };
 
 export type AddLikeMutationVariables = Exact<{
   like: AddLikeInput;
@@ -122,7 +143,7 @@ export type CreateNoteMutationVariables = Exact<{
 }>;
 
 
-export type CreateNoteMutation = { __typename?: 'Mutation', createNote?: Maybe<{ __typename?: 'Note', description: string, creator: string }> };
+export type CreateNoteMutation = { __typename?: 'Mutation', createNote?: Maybe<string> };
 
 export type CreateUserMutationVariables = Exact<{
   user: UserCreateInput;
@@ -138,10 +159,17 @@ export type DeleteNoteMutationVariables = Exact<{
 
 export type DeleteNoteMutation = { __typename?: 'Mutation', deleteNote?: Maybe<string> };
 
+export type GetCommentsByNoteIdQueryVariables = Exact<{
+  noteId: Scalars['String'];
+}>;
+
+
+export type GetCommentsByNoteIdQuery = { __typename?: 'Query', getCommentsByNoteId?: Maybe<Array<Maybe<{ __typename?: 'Comment', id: string, content: string, creator: string }>>> };
+
 export type ListNotesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ListNotesQuery = { __typename?: 'Query', listNotes?: Maybe<Array<Maybe<{ __typename?: 'Note', id: string, description: string, createdAt: string }>>> };
+export type ListNotesQuery = { __typename?: 'Query', listNotes?: Maybe<Array<Maybe<{ __typename?: 'Note', id: string, description: string, createdAt: string, score: number, creator: string }>>> };
 
 export type ListNotesByDateQueryVariables = Exact<{
   date: Scalars['String'];
@@ -151,6 +179,37 @@ export type ListNotesByDateQueryVariables = Exact<{
 export type ListNotesByDateQuery = { __typename?: 'Query', listNotesByDate?: Maybe<Array<Maybe<{ __typename?: 'Note', id: string, description: string, createdAt: string }>>> };
 
 
+export const AddCommentDocument = gql`
+    mutation addComment($comment: addCommentInput!) {
+  addComment(comment: $comment)
+}
+    `;
+export type AddCommentMutationFn = Apollo.MutationFunction<AddCommentMutation, AddCommentMutationVariables>;
+
+/**
+ * __useAddCommentMutation__
+ *
+ * To run a mutation, you first call `useAddCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addCommentMutation, { data, loading, error }] = useAddCommentMutation({
+ *   variables: {
+ *      comment: // value for 'comment'
+ *   },
+ * });
+ */
+export function useAddCommentMutation(baseOptions?: Apollo.MutationHookOptions<AddCommentMutation, AddCommentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddCommentMutation, AddCommentMutationVariables>(AddCommentDocument, options);
+      }
+export type AddCommentMutationHookResult = ReturnType<typeof useAddCommentMutation>;
+export type AddCommentMutationResult = Apollo.MutationResult<AddCommentMutation>;
+export type AddCommentMutationOptions = Apollo.BaseMutationOptions<AddCommentMutation, AddCommentMutationVariables>;
 export const AddLikeDocument = gql`
     mutation addLike($like: addLikeInput!) {
   addLike(like: $like)
@@ -184,10 +243,7 @@ export type AddLikeMutationResult = Apollo.MutationResult<AddLikeMutation>;
 export type AddLikeMutationOptions = Apollo.BaseMutationOptions<AddLikeMutation, AddLikeMutationVariables>;
 export const CreateNoteDocument = gql`
     mutation createNote($note: NoteInput!) {
-  createNote(note: $note) {
-    description
-    creator
-  }
+  createNote(note: $note)
 }
     `;
 export type CreateNoteMutationFn = Apollo.MutationFunction<CreateNoteMutation, CreateNoteMutationVariables>;
@@ -278,12 +334,51 @@ export function useDeleteNoteMutation(baseOptions?: Apollo.MutationHookOptions<D
 export type DeleteNoteMutationHookResult = ReturnType<typeof useDeleteNoteMutation>;
 export type DeleteNoteMutationResult = Apollo.MutationResult<DeleteNoteMutation>;
 export type DeleteNoteMutationOptions = Apollo.BaseMutationOptions<DeleteNoteMutation, DeleteNoteMutationVariables>;
+export const GetCommentsByNoteIdDocument = gql`
+    query getCommentsByNoteId($noteId: String!) {
+  getCommentsByNoteId(noteId: $noteId) {
+    id
+    content
+    creator
+  }
+}
+    `;
+
+/**
+ * __useGetCommentsByNoteIdQuery__
+ *
+ * To run a query within a React component, call `useGetCommentsByNoteIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCommentsByNoteIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCommentsByNoteIdQuery({
+ *   variables: {
+ *      noteId: // value for 'noteId'
+ *   },
+ * });
+ */
+export function useGetCommentsByNoteIdQuery(baseOptions: Apollo.QueryHookOptions<GetCommentsByNoteIdQuery, GetCommentsByNoteIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCommentsByNoteIdQuery, GetCommentsByNoteIdQueryVariables>(GetCommentsByNoteIdDocument, options);
+      }
+export function useGetCommentsByNoteIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCommentsByNoteIdQuery, GetCommentsByNoteIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCommentsByNoteIdQuery, GetCommentsByNoteIdQueryVariables>(GetCommentsByNoteIdDocument, options);
+        }
+export type GetCommentsByNoteIdQueryHookResult = ReturnType<typeof useGetCommentsByNoteIdQuery>;
+export type GetCommentsByNoteIdLazyQueryHookResult = ReturnType<typeof useGetCommentsByNoteIdLazyQuery>;
+export type GetCommentsByNoteIdQueryResult = Apollo.QueryResult<GetCommentsByNoteIdQuery, GetCommentsByNoteIdQueryVariables>;
 export const ListNotesDocument = gql`
     query listNotes {
   listNotes {
     id
     description
     createdAt
+    score
+    creator
   }
 }
     `;

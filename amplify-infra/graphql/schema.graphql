@@ -5,6 +5,8 @@ type Note {
   creator: String!
   likes: [Like]
   comments: [Comment]
+  score: Int!
+  voteStatus: Boolean!
 }
 
 type Like {
@@ -40,16 +42,23 @@ input addLikeInput {
   creator: String!
 }
 
+input addCommentInput {
+  noteId: String!
+  creator: String!
+  content: String!
+}
+
 type Query {
   getNoteById(noteId: String!): Note
   listNotes: [Note]
   listNotesByDate(date: String!): [Note]
+  getCommentsByNoteId(noteId: String!): [Comment]
 }
 
 type Mutation {
-  createNote(note: NoteInput!): Note
-  updateNote(note: UpdateNoteInput!): Note
+  createNote(note: NoteInput!): String
   deleteNote(noteId: String!): String
   createUser(user: UserCreateInput!): String
   addLike(like: addLikeInput!): String
+  addComment(comment: addCommentInput!): String
 }

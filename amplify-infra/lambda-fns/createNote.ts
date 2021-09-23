@@ -5,25 +5,23 @@ import { default as Note, default as NoteInput } from "./Note";
 
 async function createNote(input: NoteInput) {
   const now = new Date();
-  const note: Note = {
-    id: uuidv4(),
-    description: input.description,
-    createdAt: now.toISOString(),
-    creator: input.creator,
-  };
-
+  const id = uuidv4();
   const params = {
     TableName: process.env.NOTES_TABLE!,
     Item: {
-      pk: "NOTE#" + note.id,
+      pk: "NOTE#" + id,
       sk: "USER#" + input.creator,
-      val: note,
+      id: id,
+      description: input.description,
+      createdAt: now.toISOString(),
+      creator: input.creator,
+      score: 0,
     },
   };
 
   try {
     await docClient.put(params).promise();
-    return note;
+    return "Note Created successfully";
   } catch (err) {
     console.log("DynamoDB error: ", err);
     throw new Error("Note not created");

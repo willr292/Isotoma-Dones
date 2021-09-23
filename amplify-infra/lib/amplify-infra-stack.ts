@@ -108,6 +108,11 @@ export class AmplifyInfraStack extends cdk.Stack {
     });
 
     lambdaDs.createResolver({
+      typeName: "Query",
+      fieldName: "getCommentsByNoteId",
+    });
+
+    lambdaDs.createResolver({
       typeName: "Mutation",
       fieldName: "createNote",
     });
@@ -130,6 +135,11 @@ export class AmplifyInfraStack extends cdk.Stack {
     lambdaDs.createResolver({
       typeName: "Mutation",
       fieldName: "addLike",
+    });
+
+    lambdaDs.createResolver({
+      typeName: "Mutation",
+      fieldName: "addComment",
     });
 
     const notesTable = new ddb.Table(this, "newCDKNotesTable", {

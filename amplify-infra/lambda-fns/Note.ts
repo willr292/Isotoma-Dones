@@ -5,6 +5,7 @@ type Note = {
   description: string;
   createdAt: string;
   creator: string;
+  score: number;
 };
 
 type NoteInput = {
