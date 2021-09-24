@@ -20,8 +20,9 @@ function Home() {
   const [dateFilter, setDateFilter] = useState(new Date().toISOString());
 
   async function handleDelete(id: string) {
+    const user: CognitoUser = await Auth.currentAuthenticatedUser();
     await deleteNote({
-      variables: { noteId: id },
+      variables: { noteId: id, userId: user.getUsername() },
       update: (cache) => {
         cache.evict({ id: "ROOT_QUERY", fieldName: "listNotes" });
       },
@@ -71,14 +72,14 @@ function Home() {
               }
             }}
           />
-          <div>
+          <div className="post-container">
             {data!.listNotes
               ?.filter((x) =>
                 dateMatch(new Date(x?.createdAt!), new Date(dateFilter))
               )
               .map((x) =>
                 !x ? null : (
-                  <p key={x.id}>
+                  <div className="post" key={x.id}>
                     {x.description} -
                     {new Date(x.createdAt).toLocaleDateString("en-GB")}
                     <button
@@ -107,7 +108,7 @@ function Home() {
                     <button onClick={() => handleDelete(x.id)}>🗑️</button>
                     <br />
                     <CommentSection noteId={x.id} />
-                  </p>
+                  </div>
                 )
               )}
           </div>

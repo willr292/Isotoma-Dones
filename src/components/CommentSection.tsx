@@ -30,7 +30,7 @@ const CommentSection = ({ noteId }: CommentSectionProps) => {
       ) : (
         <div>
           {data?.getCommentsByNoteId?.map((comment) => (
-            <div>{comment?.content}</div>
+            <div key={comment?.id}>{comment?.content}</div>
           ))}
           <Formik
             initialValues={{ content: "" }}

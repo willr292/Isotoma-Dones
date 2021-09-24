@@ -57,7 +57,7 @@ type Query {
 
 type Mutation {
   createNote(note: NoteInput!): String
-  deleteNote(noteId: String!): String
+  deleteNote(noteId: String!, userId: String!): String
   createUser(user: UserCreateInput!): String
   addLike(like: addLikeInput!): String
   addComment(comment: addCommentInput!): String

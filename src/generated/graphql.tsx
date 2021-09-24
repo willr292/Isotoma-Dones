@@ -61,6 +61,7 @@ export type MutationCreateUserArgs = {
 
 export type MutationDeleteNoteArgs = {
   noteId: Scalars['String'];
+  userId: Scalars['String'];
 };
 
 export type Note = {
@@ -154,6 +155,7 @@ export type CreateUserMutation = { __typename?: 'Mutation', createUser?: Maybe<s
 
 export type DeleteNoteMutationVariables = Exact<{
   noteId: Scalars['String'];
+  userId: Scalars['String'];
 }>;
 
 
@@ -304,8 +306,8 @@ export type CreateUserMutationHookResult = ReturnType<typeof useCreateUserMutati
 export type CreateUserMutationResult = Apollo.MutationResult<CreateUserMutation>;
 export type CreateUserMutationOptions = Apollo.BaseMutationOptions<CreateUserMutation, CreateUserMutationVariables>;
 export const DeleteNoteDocument = gql`
-    mutation deleteNote($noteId: String!) {
-  deleteNote(noteId: $noteId)
+    mutation deleteNote($noteId: String!, $userId: String!) {
+  deleteNote(noteId: $noteId, userId: $userId)
 }
     `;
 export type DeleteNoteMutationFn = Apollo.MutationFunction<DeleteNoteMutation, DeleteNoteMutationVariables>;
@@ -324,6 +326,7 @@ export type DeleteNoteMutationFn = Apollo.MutationFunction<DeleteNoteMutation, D
  * const [deleteNoteMutation, { data, loading, error }] = useDeleteNoteMutation({
  *   variables: {
  *      noteId: // value for 'noteId'
+ *      userId: // value for 'userId'
  *   },
  * });
  */

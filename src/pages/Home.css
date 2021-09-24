@@ -7,6 +7,23 @@
   pointer-events: none;
 }
 
+.post-container {
+  align-items: center;
+  align-content: center;
+}
+
+.post {
+  padding: 5px;
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  border-style: solid;
+  border-radius: 10px;
+  border-color: grey;
+  border-width: 1px;
+  width: 500px;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
@@ -35,9 +52,4 @@
   to {
     transform: rotate(360deg);
   }
-}
-
-.p {
-  border-style: solid;
-  border-color: grey;
 }
