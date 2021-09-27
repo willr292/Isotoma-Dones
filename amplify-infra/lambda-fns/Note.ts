@@ -1,5 +1,3 @@
-import { Like } from "./Like";
-
 type Note = {
   id: string;
   description: string;
@@ -8,13 +6,18 @@ type Note = {
   score: number;
 };
 
-type NoteInput = {
+export type NoteInput = {
   description: string;
   creator: string;
 };
 
-type UpdateNoteInput = {
+export type UpdateNoteInput = {
   description: string;
+};
+
+export type DeleteNoteInput = {
+  noteId: string;
+  userId: string;
 };
 
 export default Note;

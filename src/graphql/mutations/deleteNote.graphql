@@ -1,3 +1,3 @@
-mutation deleteNote($noteId: String!, $userId: String!) {
-  deleteNote(noteId: $noteId, userId: $userId)
+mutation deleteNote($input: DeleteNoteInput!) {
+  deleteNote(input: $input)
 }

@@ -1,10 +1,27 @@
 import * as AWS from "aws-sdk";
-const docClient = new AWS.DynamoDB.DocumentClient();
 import { v4 as uuidv4 } from "uuid";
-import { default as Note, default as NoteInput } from "./Note";
+import { NoteInput } from "./Note";
+
+let config: any;
+const isTest = process.env.JEST_WORKER_ID;
+if (isTest) {
+  config = {
+    convertEmptyValues: true,
+    ...(isTest && {
+      endpoint: "localhost:8000",
+      sslEnabled: false,
+      region: "local-env",
+    }),
+  };
+} else {
+  config = {};
+}
+
+const docClient = new AWS.DynamoDB.DocumentClient(config);
 
 async function createNote(input: NoteInput) {
   const now = new Date();
+
   const id = uuidv4();
   const params = {
     TableName: process.env.NOTES_TABLE!,
@@ -13,7 +30,7 @@ async function createNote(input: NoteInput) {
       sk: "USER#" + input.creator,
       id: id,
       description: input.description,
-      createdAt: now.toISOString(),
+      createdAt: now.toISOString().split("T")[0],
       creator: input.creator,
       score: 0,
     },

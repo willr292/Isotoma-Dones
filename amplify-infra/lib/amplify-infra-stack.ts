@@ -155,5 +155,12 @@ export class AmplifyInfraStack extends cdk.Stack {
 
     // Create an environment variable that we will use in the function code
     notesLambda.addEnvironment("NOTES_TABLE", notesTable.tableName);
+
+    notesTable.addGlobalSecondaryIndex({
+      indexName: "dateIndex",
+      partitionKey: { name: "createdAt", type: ddb.AttributeType.STRING },
+      sortKey: { name: "sk", type: ddb.AttributeType.STRING },
+      projectionType: ddb.ProjectionType.ALL,
+    });
   }
 }

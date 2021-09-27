@@ -8,34 +8,32 @@ import CommentSection from "../components/CommentSection";
 import {
   useAddLikeMutation,
   useDeleteNoteMutation,
-  useListNotesQuery,
+  useListNotesByDateQuery,
 } from "../generated/graphql";
 import "./Home.css";
 
 function Home() {
   let history = useHistory();
-  const { data, loading, error } = useListNotesQuery();
+  //const { data, loading, error } = useListNotesQuery();
   const [deleteNote] = useDeleteNoteMutation();
   const [addLike] = useAddLikeMutation();
   const [dateFilter, setDateFilter] = useState(new Date().toISOString());
+  const { data, loading, error } = useListNotesByDateQuery({
+    variables: {
+      date: dateFilter,
+    },
+  });
 
   async function handleDelete(id: string) {
     const user: CognitoUser = await Auth.currentAuthenticatedUser();
+    console.log(id + " " + user.getUsername());
     await deleteNote({
-      variables: { noteId: id, userId: user.getUsername() },
+      variables: { input: { noteId: id, userId: user.getUsername() } },
       update: (cache) => {
-        cache.evict({ id: "ROOT_QUERY", fieldName: "listNotes" });
+        cache.evict({ id: "ROOT_QUERY", fieldName: "listNotesByDate" });
       },
     });
   }
-
-  const dateMatch = (date: Date, filter: Date) => {
-    return (
-      date.getDate() === filter.getDate() &&
-      date.getMonth() === filter.getMonth() &&
-      date.getFullYear() === filter.getFullYear()
-    );
-  };
 
   if (!loading && !data) {
     return <div>error {error}</div>;
@@ -73,44 +71,41 @@ function Home() {
             }}
           />
           <div className="post-container">
-            {data!.listNotes
-              ?.filter((x) =>
-                dateMatch(new Date(x?.createdAt!), new Date(dateFilter))
+            {data!.listNotesByDate?.map((x) =>
+              !x ? null : (
+                <div className="post" key={x.id}>
+                  {x.description} -
+                  {" " + new Date(x.createdAt).toLocaleDateString("en-GB")}
+                  <button
+                    //disabled={x.voteStatus}
+                    onClick={async () => {
+                      const user: CognitoUser =
+                        await Auth.currentAuthenticatedUser();
+                      await addLike({
+                        variables: {
+                          like: {
+                            noteId: x.id,
+                            creator: user.getUsername(),
+                          },
+                        },
+                        update: (cache) => {
+                          console.log(cache);
+                          cache.evict({
+                            id: "ROOT_QUERY",
+                            fieldName: "listNotesByDate",
+                          });
+                        },
+                      });
+                    }}
+                  >
+                    👍 - {x.score}
+                  </button>
+                  <button onClick={() => handleDelete(x.id)}>🗑️</button>
+                  <br />
+                  <CommentSection noteId={x.id} />
+                </div>
               )
-              .map((x) =>
-                !x ? null : (
-                  <div className="post" key={x.id}>
-                    {x.description} -
-                    {new Date(x.createdAt).toLocaleDateString("en-GB")}
-                    <button
-                      //disabled={x.voteStatus}
-                      onClick={async () => {
-                        const user: CognitoUser =
-                          await Auth.currentAuthenticatedUser();
-                        await addLike({
-                          variables: {
-                            like: {
-                              noteId: x.id,
-                              creator: user.getUsername(),
-                            },
-                          },
-                          update: (cache) => {
-                            cache.evict({
-                              id: "ROOT_QUERY",
-                              fieldName: "listNotes",
-                            });
-                          },
-                        });
-                      }}
-                    >
-                      👍 - {x.score}
-                    </button>
-                    <button onClick={() => handleDelete(x.id)}>🗑️</button>
-                    <br />
-                    <CommentSection noteId={x.id} />
-                  </div>
-                )
-              )}
+            )}
           </div>
         </>
       )}

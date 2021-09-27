@@ -3,7 +3,7 @@ import deleteNote from "./deleteNote";
 import getNoteById from "./getNoteById";
 import listNotes from "./listNotes";
 import listNotesByDate from "./listNotesByDate";
-import Note from "./Note";
+import Note, { DeleteNoteInput, NoteInput } from "./Note";
 import updateNote from "./updateNote";
 import createUser from "./createUser";
 import { addLikeInput } from "./Like";
@@ -18,12 +18,12 @@ type AppSyncEvent = {
   };
   arguments: {
     noteId: string;
-    note: Note;
+    note: NoteInput;
     date: string;
     user: UserCreateInput;
     like: addLikeInput;
     comment: addCommentInput;
-    userId: string;
+    input: DeleteNoteInput;
   };
 };
 
@@ -38,7 +38,7 @@ export const handler = async (event: AppSyncEvent) => {
     case "listNotesByDate":
       return await listNotesByDate(event.arguments.date);
     case "deleteNote":
-      return await deleteNote(event.arguments.noteId, event.arguments.noteId);
+      return await deleteNote(event.arguments.input);
     case "updateNote":
       return await updateNote(event.arguments.note);
     case "createUser":

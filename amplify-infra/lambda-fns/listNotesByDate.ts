@@ -3,19 +3,23 @@ const docClient: AWS.DynamoDB.DocumentClient =
   new AWS.DynamoDB.DocumentClient();
 
 async function listNotesByDate(date: string) {
-  const params = {
+  const filter = new Date(date).toISOString().split("T")[0];
+  const params: AWS.DynamoDB.DocumentClient.QueryInput = {
     TableName: process.env.NOTES_TABLE!,
+    IndexName: "dateIndex",
+    KeyConditionExpression: "#pk = :pk and begins_with(#sk, :sortkeyval)",
+    ExpressionAttributeValues: {
+      ":sortkeyval": "USER#",
+      ":pk": filter,
+    },
+    ExpressionAttributeNames: { "#sk": "sk", "#pk": "createdAt" },
   };
   try {
-    const data = await docClient.scan(params).promise();
-    const filter = new Date(date);
-    // TODO make a secondary index to scan by date
-    return data?.Items?.filter((x) => {
-      dateMatch(new Date(x.createdAt), filter);
-    });
+    const data = await docClient.query(params).promise();
+    return data.Items;
   } catch (err) {
     console.log("DynamoDB error: ", err);
-    return null;
+    throw new Error("Could not get notes");
   }
 }
 

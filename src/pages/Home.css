@@ -24,6 +24,11 @@
   width: 500px;
 }
 
+button {
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;

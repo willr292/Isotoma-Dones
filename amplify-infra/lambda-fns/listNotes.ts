@@ -1,5 +1,21 @@
 import * as AWS from "aws-sdk";
-const docClient = new AWS.DynamoDB.DocumentClient();
+
+let config: any;
+const isTest = process.env.JEST_WORKER_ID;
+if (isTest) {
+  config = {
+    convertEmptyValues: true,
+    ...(isTest && {
+      endpoint: "localhost:8000",
+      sslEnabled: false,
+      region: "local-env",
+    }),
+  };
+} else {
+  config = {};
+}
+
+const docClient = new AWS.DynamoDB.DocumentClient(config);
 
 async function listNotes() {
   const params: AWS.DynamoDB.DocumentClient.ScanInput = {
@@ -17,7 +33,7 @@ async function listNotes() {
     return data.Items;
   } catch (err) {
     console.log("DynamoDB error: ", err);
-    throw new Error("Could not fetch Notes");
+    throw err; //new Error("Could not fetch Notes");
   }
 }
 

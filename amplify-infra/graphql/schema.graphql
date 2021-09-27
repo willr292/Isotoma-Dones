@@ -48,6 +48,11 @@ input addCommentInput {
   content: String!
 }
 
+input DeleteNoteInput {
+  noteId: String!
+  userId: String!
+}
+
 type Query {
   getNoteById(noteId: String!): Note
   listNotes: [Note]
@@ -57,7 +62,7 @@ type Query {
 
 type Mutation {
   createNote(note: NoteInput!): String
-  deleteNote(noteId: String!, userId: String!): String
+  deleteNote(input: DeleteNoteInput!): String
   createUser(user: UserCreateInput!): String
   addLike(like: addLikeInput!): String
   addComment(comment: addCommentInput!): String

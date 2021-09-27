@@ -22,6 +22,11 @@ export type Comment = {
   noteId: Scalars['ID'];
 };
 
+export type DeleteNoteInput = {
+  noteId: Scalars['String'];
+  userId: Scalars['String'];
+};
+
 export type Like = {
   __typename?: 'Like';
   creator: Scalars['String'];
@@ -60,8 +65,7 @@ export type MutationCreateUserArgs = {
 
 
 export type MutationDeleteNoteArgs = {
-  noteId: Scalars['String'];
-  userId: Scalars['String'];
+  input: DeleteNoteInput;
 };
 
 export type Note = {
@@ -154,8 +158,7 @@ export type CreateUserMutationVariables = Exact<{
 export type CreateUserMutation = { __typename?: 'Mutation', createUser?: Maybe<string> };
 
 export type DeleteNoteMutationVariables = Exact<{
-  noteId: Scalars['String'];
-  userId: Scalars['String'];
+  input: DeleteNoteInput;
 }>;
 
 
@@ -178,7 +181,7 @@ export type ListNotesByDateQueryVariables = Exact<{
 }>;
 
 
-export type ListNotesByDateQuery = { __typename?: 'Query', listNotesByDate?: Maybe<Array<Maybe<{ __typename?: 'Note', id: string, description: string, createdAt: string }>>> };
+export type ListNotesByDateQuery = { __typename?: 'Query', listNotesByDate?: Maybe<Array<Maybe<{ __typename?: 'Note', id: string, description: string, createdAt: string, score: number, creator: string }>>> };
 
 
 export const AddCommentDocument = gql`
@@ -306,8 +309,8 @@ export type CreateUserMutationHookResult = ReturnType<typeof useCreateUserMutati
 export type CreateUserMutationResult = Apollo.MutationResult<CreateUserMutation>;
 export type CreateUserMutationOptions = Apollo.BaseMutationOptions<CreateUserMutation, CreateUserMutationVariables>;
 export const DeleteNoteDocument = gql`
-    mutation deleteNote($noteId: String!, $userId: String!) {
-  deleteNote(noteId: $noteId, userId: $userId)
+    mutation deleteNote($input: DeleteNoteInput!) {
+  deleteNote(input: $input)
 }
     `;
 export type DeleteNoteMutationFn = Apollo.MutationFunction<DeleteNoteMutation, DeleteNoteMutationVariables>;
@@ -325,8 +328,7 @@ export type DeleteNoteMutationFn = Apollo.MutationFunction<DeleteNoteMutation, D
  * @example
  * const [deleteNoteMutation, { data, loading, error }] = useDeleteNoteMutation({
  *   variables: {
- *      noteId: // value for 'noteId'
- *      userId: // value for 'userId'
+ *      input: // value for 'input'
  *   },
  * });
  */
@@ -418,6 +420,8 @@ export const ListNotesByDateDocument = gql`
     id
     description
     createdAt
+    score
+    creator
   }
 }
     `;

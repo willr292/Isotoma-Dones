@@ -28,7 +28,7 @@ const AddNoteForm: React.FC<{}> = () => {
               },
             },
             update: (cache) => {
-              cache.evict({ id: "ROOT_QUERY", fieldName: "listNotes" });
+              cache.evict({ id: "ROOT_QUERY", fieldName: "listNotesByDate" });
             },
           });
           actions.resetForm({});

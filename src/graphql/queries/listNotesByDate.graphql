@@ -3,5 +3,7 @@ query listNotesByDate($date: String!) {
     id
     description
     createdAt
+    score
+    creator
   }
 }
