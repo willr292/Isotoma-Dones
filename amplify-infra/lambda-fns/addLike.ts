@@ -2,7 +2,22 @@ import * as AWS from "aws-sdk";
 import { v4 as uuidv4 } from "uuid";
 import { addLikeInput, Like } from "./Like";
 
-const docClient = new AWS.DynamoDB.DocumentClient();
+let config: any;
+const isTest = process.env.JEST_WORKER_ID;
+if (isTest) {
+  config = {
+    convertEmptyValues: true,
+    ...(isTest && {
+      endpoint: "localhost:8000",
+      sslEnabled: false,
+      region: "local-env",
+    }),
+  };
+} else {
+  config = {};
+}
+
+const docClient = new AWS.DynamoDB.DocumentClient(config);
 
 async function addLike(like: addLikeInput) {
   // Add the like item

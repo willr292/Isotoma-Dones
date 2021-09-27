@@ -6,6 +6,8 @@ import * as uuid from "uuid";
 import addCommentInput from "../lambda-fns/Comment";
 import addComment from "../lambda-fns/addComment";
 import getCommentsbyNoteId from "../lambda-fns/getCommentsByNoteId";
+import { addLikeInput } from "../lambda-fns/Like";
+import addLike from "../lambda-fns/addLike";
 jest.mock("uuid");
 
 const isTest = process.env.JEST_WORKER_ID;
@@ -79,7 +81,7 @@ describe("notes", () => {
     ]);
   });
 
-  it("returns comment when note created", async () => {
+  it("returns comment when note and comment created", async () => {
     const note: NoteInput = { description: "test", creator: "12345" };
     const comment: addCommentInput = {
       noteId: "testid",
@@ -103,6 +105,34 @@ describe("notes", () => {
         noteId: "testid",
         pk: "NOTE#testid",
         sk: "COMMENT#testid",
+      },
+    ]);
+  });
+
+  it("updates score when like added", async () => {
+    const note: NoteInput = { description: "test", creator: "12345" };
+    const like: addLikeInput = {
+      noteId: "testid",
+      creator: "12345",
+    };
+    const now = new Date();
+    const anonymousId = "testid";
+    jest.spyOn(uuid, "v4").mockReturnValue(anonymousId);
+
+    await createNote(note);
+    const create = await addLike(like);
+    const result = await listNotes();
+
+    expect(create).toStrictEqual("like added");
+    expect(result).toStrictEqual([
+      {
+        createdAt: now.toISOString().split("T")[0],
+        score: 1,
+        creator: "12345",
+        sk: "USER#12345",
+        description: "test",
+        pk: "NOTE#testid",
+        id: "testid",
       },
     ]);
   });
