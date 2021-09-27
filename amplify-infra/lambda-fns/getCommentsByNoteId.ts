@@ -1,5 +1,20 @@
 import * as AWS from "aws-sdk";
-const docClient = new AWS.DynamoDB.DocumentClient();
+let config: any;
+const isTest = process.env.JEST_WORKER_ID;
+if (isTest) {
+  config = {
+    convertEmptyValues: true,
+    ...(isTest && {
+      endpoint: "localhost:8000",
+      sslEnabled: false,
+      region: "local-env",
+    }),
+  };
+} else {
+  config = {};
+}
+
+const docClient = new AWS.DynamoDB.DocumentClient(config);
 
 async function getCommentsbyNoteId(noteId: string) {
   const params: AWS.DynamoDB.DocumentClient.QueryInput = {

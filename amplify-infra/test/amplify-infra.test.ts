@@ -3,6 +3,9 @@ import createNote from "../lambda-fns/createNote";
 import listNotes from "../lambda-fns/listNotes";
 import { NoteInput } from "../lambda-fns/Note";
 import * as uuid from "uuid";
+import addCommentInput from "../lambda-fns/Comment";
+import addComment from "../lambda-fns/addComment";
+import getCommentsbyNoteId from "../lambda-fns/getCommentsByNoteId";
 jest.mock("uuid");
 
 const isTest = process.env.JEST_WORKER_ID;
@@ -53,13 +56,15 @@ describe("notes", () => {
     expect(result).toStrictEqual([]);
   });
 
-  it("returns empty list when no records", async () => {
+  it("returns note when note created", async () => {
     const note: NoteInput = { description: "test", creator: "12345" };
     const now = new Date();
     const anonymousId = "testid";
-    const Spy = jest.spyOn(uuid, "v4").mockReturnValue(anonymousId);
+    jest.spyOn(uuid, "v4").mockReturnValue(anonymousId);
+
     const create = await createNote(note);
     const result = await listNotes();
+
     expect(create).toStrictEqual("Note Created successfully");
     expect(result).toStrictEqual([
       {
@@ -70,6 +75,34 @@ describe("notes", () => {
         description: "test",
         pk: "NOTE#testid",
         id: "testid",
+      },
+    ]);
+  });
+
+  it("returns comment when note created", async () => {
+    const note: NoteInput = { description: "test", creator: "12345" };
+    const comment: addCommentInput = {
+      noteId: "testid",
+      creator: "12345",
+      content: "testing",
+    };
+    const now = new Date();
+    const anonymousId = "testid";
+    jest.spyOn(uuid, "v4").mockReturnValue(anonymousId);
+
+    await createNote(note);
+    const create = await addComment(comment);
+    const result = await getCommentsbyNoteId(anonymousId);
+
+    expect(create).toStrictEqual("comment added");
+    expect(result).toStrictEqual([
+      {
+        content: "testing",
+        creator: "12345",
+        id: "testid",
+        noteId: "testid",
+        pk: "NOTE#testid",
+        sk: "COMMENT#testid",
       },
     ]);
   });
