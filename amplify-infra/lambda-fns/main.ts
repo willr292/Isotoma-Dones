@@ -24,6 +24,7 @@ type AppSyncEvent = {
     like: addLikeInput;
     comment: addCommentInput;
     input: DeleteNoteInput;
+    userId: string;
   };
 };
 
@@ -36,7 +37,10 @@ export const handler = async (event: AppSyncEvent) => {
     case "listNotes":
       return await listNotes();
     case "listNotesByDate":
-      return await listNotesByDate(event.arguments.date);
+      return await listNotesByDate(
+        event.arguments.date,
+        event.arguments.userId
+      );
     case "deleteNote":
       return await deleteNote(event.arguments.input);
     case "updateNote":

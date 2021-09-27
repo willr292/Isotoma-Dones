@@ -26,7 +26,7 @@ async function addLike(like: addLikeInput) {
     TableName: process.env.NOTES_TABLE!,
     Item: {
       pk: "NOTE#" + like.noteId,
-      sk: "LIKE#" + id,
+      sk: "LIKE#" + like.creator,
       id: uuidv4(),
       noteId: like.noteId,
       creator: like.creator,

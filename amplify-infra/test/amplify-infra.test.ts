@@ -39,7 +39,7 @@ beforeEach(async () => {
         try {
           const params = {
             TableName,
-            Key: { PK: tableItem.PK, SK: tableItem.SK },
+            Key: { pk: tableItem.pk, sk: tableItem.sk },
           };
           await ddb.delete(params).promise();
         } catch (err) {

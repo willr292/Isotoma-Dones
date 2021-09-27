@@ -1,5 +1,5 @@
 import Auth, { CognitoUser } from "@aws-amplify/auth";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useHistory } from "react-router";
@@ -8,6 +8,7 @@ import CommentSection from "../components/CommentSection";
 import {
   useAddLikeMutation,
   useDeleteNoteMutation,
+  useListNotesByDateLazyQuery,
   useListNotesByDateQuery,
 } from "../generated/graphql";
 import "./Home.css";
@@ -18,11 +19,23 @@ function Home() {
   const [deleteNote] = useDeleteNoteMutation();
   const [addLike] = useAddLikeMutation();
   const [dateFilter, setDateFilter] = useState(new Date().toISOString());
-  const { data, loading, error } = useListNotesByDateQuery({
-    variables: {
-      date: dateFilter,
-    },
-  });
+  const [getNotes, { data, loading, error }] = useListNotesByDateLazyQuery();
+
+  useEffect(() => {
+    async function fetchUsername() {
+      const user = await Auth.currentAuthenticatedUser();
+      if (user) {
+        getNotes({
+          variables: {
+            date: dateFilter,
+            userId: user.getUsername(),
+          },
+        });
+      }
+    }
+
+    fetchUsername();
+  }, []);
 
   async function handleDelete(id: string) {
     const user: CognitoUser = await Auth.currentAuthenticatedUser();
@@ -77,7 +90,7 @@ function Home() {
                   {x.description} -
                   {" " + new Date(x.createdAt).toLocaleDateString("en-GB")}
                   <button
-                    //disabled={x.voteStatus}
+                    disabled={x.voteStatus}
                     onClick={async () => {
                       const user: CognitoUser =
                         await Auth.currentAuthenticatedUser();

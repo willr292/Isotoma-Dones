@@ -16,7 +16,7 @@ export default function AdminRoute({ ...routeProps }: RouteProps) {
 
       const groups = await user.getSignInUserSession()?.getAccessToken()
         .payload;
-      if (!groups || !groups["cognito:groups"].includes("admin")) {
+      if (!groups || !groups["cognito:groups"]?.includes("admin")) {
         history.push("/login");
       }
     }

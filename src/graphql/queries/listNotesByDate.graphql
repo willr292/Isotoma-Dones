@@ -1,9 +1,10 @@
-query listNotesByDate($date: String!) {
-  listNotesByDate(date: $date) {
+query listNotesByDate($date: String!, $userId: String!) {
+  listNotesByDate(date: $date, userId: $userId) {
     id
     description
     createdAt
     score
     creator
+    voteStatus
   }
 }

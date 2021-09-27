@@ -56,7 +56,7 @@ input DeleteNoteInput {
 type Query {
   getNoteById(noteId: String!): Note
   listNotes: [Note]
-  listNotesByDate(date: String!): [Note]
+  listNotesByDate(date: String!, userId: String!): [Note]
   getCommentsByNoteId(noteId: String!): [Comment]
 }
 

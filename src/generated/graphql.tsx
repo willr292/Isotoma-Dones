@@ -106,6 +106,7 @@ export type QueryGetNoteByIdArgs = {
 
 export type QueryListNotesByDateArgs = {
   date: Scalars['String'];
+  userId: Scalars['String'];
 };
 
 export type UpdateNoteInput = {
@@ -178,10 +179,11 @@ export type ListNotesQuery = { __typename?: 'Query', listNotes?: Maybe<Array<May
 
 export type ListNotesByDateQueryVariables = Exact<{
   date: Scalars['String'];
+  userId: Scalars['String'];
 }>;
 
 
-export type ListNotesByDateQuery = { __typename?: 'Query', listNotesByDate?: Maybe<Array<Maybe<{ __typename?: 'Note', id: string, description: string, createdAt: string, score: number, creator: string }>>> };
+export type ListNotesByDateQuery = { __typename?: 'Query', listNotesByDate?: Maybe<Array<Maybe<{ __typename?: 'Note', id: string, description: string, createdAt: string, score: number, creator: string, voteStatus: boolean }>>> };
 
 
 export const AddCommentDocument = gql`
@@ -415,13 +417,14 @@ export type ListNotesQueryHookResult = ReturnType<typeof useListNotesQuery>;
 export type ListNotesLazyQueryHookResult = ReturnType<typeof useListNotesLazyQuery>;
 export type ListNotesQueryResult = Apollo.QueryResult<ListNotesQuery, ListNotesQueryVariables>;
 export const ListNotesByDateDocument = gql`
-    query listNotesByDate($date: String!) {
-  listNotesByDate(date: $date) {
+    query listNotesByDate($date: String!, $userId: String!) {
+  listNotesByDate(date: $date, userId: $userId) {
     id
     description
     createdAt
     score
     creator
+    voteStatus
   }
 }
     `;
@@ -439,6 +442,7 @@ export const ListNotesByDateDocument = gql`
  * const { data, loading, error } = useListNotesByDateQuery({
  *   variables: {
  *      date: // value for 'date'
+ *      userId: // value for 'userId'
  *   },
  * });
  */

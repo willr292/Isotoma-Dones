@@ -29,7 +29,6 @@ async function listNotes() {
 
   try {
     const data = await docClient.scan(params).promise();
-    console.log(data);
     return data.Items;
   } catch (err) {
     console.log("DynamoDB error: ", err);
