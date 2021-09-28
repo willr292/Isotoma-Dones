@@ -109,6 +109,11 @@ export type QueryListNotesByDateArgs = {
   userId: Scalars['String'];
 };
 
+export type Subscription = {
+  __typename?: 'Subscription';
+  onAddLike?: Maybe<Scalars['String']>;
+};
+
 export type UpdateNoteInput = {
   description: Scalars['String'];
 };
@@ -184,6 +189,11 @@ export type ListNotesByDateQueryVariables = Exact<{
 
 
 export type ListNotesByDateQuery = { __typename?: 'Query', listNotesByDate?: Maybe<Array<Maybe<{ __typename?: 'Note', id: string, description: string, createdAt: string, score: number, creator: string, voteStatus: boolean }>>> };
+
+export type OnAddLikeSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type OnAddLikeSubscription = { __typename?: 'Subscription', onAddLike?: Maybe<string> };
 
 
 export const AddCommentDocument = gql`
@@ -457,3 +467,30 @@ export function useListNotesByDateLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type ListNotesByDateQueryHookResult = ReturnType<typeof useListNotesByDateQuery>;
 export type ListNotesByDateLazyQueryHookResult = ReturnType<typeof useListNotesByDateLazyQuery>;
 export type ListNotesByDateQueryResult = Apollo.QueryResult<ListNotesByDateQuery, ListNotesByDateQueryVariables>;
+export const OnAddLikeDocument = gql`
+    subscription onAddLike {
+  onAddLike
+}
+    `;
+
+/**
+ * __useOnAddLikeSubscription__
+ *
+ * To run a query within a React component, call `useOnAddLikeSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useOnAddLikeSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOnAddLikeSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useOnAddLikeSubscription(baseOptions?: Apollo.SubscriptionHookOptions<OnAddLikeSubscription, OnAddLikeSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<OnAddLikeSubscription, OnAddLikeSubscriptionVariables>(OnAddLikeDocument, options);
+      }
+export type OnAddLikeSubscriptionHookResult = ReturnType<typeof useOnAddLikeSubscription>;
+export type OnAddLikeSubscriptionResult = Apollo.SubscriptionResult<OnAddLikeSubscription>;

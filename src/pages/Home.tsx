@@ -5,19 +5,16 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useHistory } from "react-router";
 import AddNoteForm from "../components/AddNoteForm";
 import CommentSection from "../components/CommentSection";
+import LikeButton from "../components/LikeButton";
 import {
-  useAddLikeMutation,
   useDeleteNoteMutation,
   useListNotesByDateLazyQuery,
-  useListNotesByDateQuery,
 } from "../generated/graphql";
 import "./Home.css";
 
 function Home() {
   let history = useHistory();
-  //const { data, loading, error } = useListNotesQuery();
   const [deleteNote] = useDeleteNoteMutation();
-  const [addLike] = useAddLikeMutation();
   const [dateFilter, setDateFilter] = useState(new Date().toISOString());
   const [getNotes, { data, loading, error }] = useListNotesByDateLazyQuery();
 
@@ -35,7 +32,7 @@ function Home() {
     }
 
     fetchUsername();
-  }, []);
+  }, [dateFilter]);
 
   async function handleDelete(id: string) {
     const user: CognitoUser = await Auth.currentAuthenticatedUser();
@@ -89,30 +86,11 @@ function Home() {
                 <div className="post" key={x.id}>
                   {x.description} -
                   {" " + new Date(x.createdAt).toLocaleDateString("en-GB")}
-                  <button
-                    disabled={x.voteStatus}
-                    onClick={async () => {
-                      const user: CognitoUser =
-                        await Auth.currentAuthenticatedUser();
-                      await addLike({
-                        variables: {
-                          like: {
-                            noteId: x.id,
-                            creator: user.getUsername(),
-                          },
-                        },
-                        update: (cache) => {
-                          console.log(cache);
-                          cache.evict({
-                            id: "ROOT_QUERY",
-                            fieldName: "listNotesByDate",
-                          });
-                        },
-                      });
-                    }}
-                  >
-                    👍 - {x.score}
-                  </button>
+                  <LikeButton
+                    score={x.score}
+                    voteStatus={x.voteStatus}
+                    noteId={x.id}
+                  />
                   <button onClick={() => handleDelete(x.id)}>🗑️</button>
                   <br />
                   <CommentSection noteId={x.id} />
